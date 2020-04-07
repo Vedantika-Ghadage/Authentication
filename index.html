@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.js"></script>
+        <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.js"></script>
+        <script src="app.js"></script>
+    </head>
+    <body ng-app="app">
+        <div ng-controller="MainCtrl">
+            <h4>Name</h4>
+            <input type="text" class="form-control" ng-model="name" >
+            <h4>Email</h4>
+            <input type="email" class="form-control" ng-model="email">
+            <h4>Passwords</h4>
+            <input type="password" class="form-control" ng-model="password">
+            <br>
+            <br>
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="signIn()">SignIn</button>
+              </span>
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="createUserWithEmailAndPassword()">Register</button>
+              </span>
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="signOut()">sign Out</button>
+              </span>
+              <!--<span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="readUserData()">DisplayData</button>
+              </span>-->
+              <br>
+              <br>
+              <h3>
+              {{userName}}
+              </h3>
+              <br>
+              <h3>
+              {{userEmail}}
+              </h3>
+              <br>
+              <h3>
+              {{LastSignInDate}} 
+              </h3>
+              <br>
+              <h3>
+              {{LastSignInTime}}
+              </h3>
+        </div>
+    </body>
+</html>
