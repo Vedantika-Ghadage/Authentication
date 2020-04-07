@@ -17,10 +17,6 @@ var config = {
     $scope.data = {};
     $scope.CurrentDate = $filter('date')(new Date(), 'dd/MM/yyyy');
     $scope.CurrentTime = $filter('date')(new Date(), 'HH:mm:ss');
-    $scope.userName = ""
-    $scope.userEmail = ""
-    $scope.LastSignInDate = ""
-    $scope.LastSignInTime = ""
 
     //authentication create function**************************************************************
 
@@ -33,11 +29,26 @@ var config = {
         // console.log($scope.email)
         authObj.$createUserWithEmailAndPassword($scope.email, $scope.password)
           .then(function(data){
+
+            var user = firebase.auth().currentUser;
+            user.updateProfile({
+              displayName: $scope.name,
+              photoURL: 'http://lageniusinfo.com/images/female_user_icon_clip_art.jpg'
+            }).then(function() {
+              console.log(user);
+              
+              user.sendEmailVerification();
+            }).catch(function(error) {
+              console.log(error)
+            });
+
+
             console.log(data.uid);
             var userdetailobject={  
                                     name: $scope.name,
                                     email: $scope.email,
                                     password: $scope.password,
+                                    photoURL : 'http://lageniusinfo.com/images/female_user_icon_clip_art.jpg',
                                     uid:data.uid,
                                     Date:$scope.CurrentDate,
                                     Time:$scope.CurrentTime
@@ -80,32 +91,35 @@ var config = {
           firebase.database().ref('userdetail').orderByChild("uid").equalTo(rs.uid)
           .once('value')
           .then(snapshot => {
+            // var user = firebase.auth().currentUser;
             $scope.records = snapshot.val();
             if($scope.records!=null){
               angular.forEach($scope.records,
                 function(value,key) {
+                  var displaydetails={
+                                        Name : value.name,
+                                        Email : value.email,
+                                        Uid : value.uid,
+                                        Date : value.Date,
+                                        Time : value.Time
+                  }
                   console.log("********************")  
-                  $scope.userName =("Name : "+ value.name)
-                  $scope.userEmail = ("Email : "+value.email)
-                  $scope.LastSignInDate = ("Last Sign In Date : "+value.Date)
-                  $scope.LastSignInTime = ("Last Sign In Time : "+value.Time)
-                  console.log(value.name);
-                    console.log(value.email)
-                    console.log(value.uid)
-                    console.log(value.Date)
-                    console.log(value.Time)
-                    console.log("********************")
-                    firebase.database().ref('userdetail').child(key).update({
-                                                                              Date:$scope.CurrentDate,
-                                                                              Time:$scope.CurrentTime
-                                                                            }).then(()=>{
+                  console.log(displaydetails)
+                  console.log("********************")
+                  var userUpdate = {
+                                      Date : $scope.CurrentDate,
+                                      Time : $scope.CurrentTime
+                                    }
+
+                  firebase.database().ref('userdetail').child(key).update(userUpdate).then(()=>{
                                                                               alert("Sign In")
                                                                             })
                 });
             }
             else{
-              var userdetailobject={ 
+              var userdetailobject={  name : rs.displayName,
                                       email: rs.email,
+                                      photoURL : rs.photoURL,
                                       uid:rs.uid,
                                       Date:$scope.CurrentDate,
                                       Time:$scope.CurrentTime
@@ -131,10 +145,6 @@ var config = {
       $scope.signOut = function (){
         $scope.data.$destroy();
         $scope.authObj.$signOut();
-        $scope.userName = ""
-        $scope.userEmail = ""
-        $scope.LastSignInDate = ""
-        $scope.LastSignInTime = ""
         alert("Sign Out")
       }
 
